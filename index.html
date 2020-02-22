@@ -2,9 +2,39 @@
 <html>
 	<head>
 		<link href="style.css" rel="stylesheet" type="text/css">
+		<script src="numbers.js"></script>
+		<script src="coiny.js"></script>
 	</head>
 	<body>
-		<div id="coinyPicture" style="background-image: url(&quot;https://vignette.wikia.nocookie.net/battlefordreamisland/images/f/fa/Coiny_Icon.png/&quot;); transition: opacity 0.1s ease-out 0s, transform 0.1s ease-out 0s;">		
+		<div id="cakeAtStake">
+			Cake at Stake will happen in <span id="cakeAtStakeTimer">0</span>.
 		</div>
+		<div id="coinyPicture" style="background-image: url(&quot;https://vignette.wikia.nocookie.net/battlefordreamisland/images/f/fa/Coiny_Icon.png/&quot;); transition: opacity 0.1s ease-out 0s, transform 0.1s ease-out 0s;" onclick="addCoins();"></div>
+		<div id="coinAmount">
+			You have <span id="coinys">0 Coinys</span>.
+		</div>
+		<div id="cakeAmount">
+			You have <span id="cakes">0 cakes</span>.
+		</div>
+			<div id="shop">
+				<div id="shopTitle">Shop</div>
+				<div id="cMakerTitle">Coin Makers:</div>
+				<div id="coinMakers">
+					
+				</div>
+				<div id="cBakerTitle">Cake Bakers:</div>
+				<div id="cakeBakers">
+				</div>
+				<div id="upgradesTitle">Upgrades:</div>
+				<div id="upgrades">
+				</div>
+				<div id="boughtUpgradesTitle">Bought Upgrades:</div>
+				<div id="boughtUpgrades">
+				</div>
+			</div>		
+		</div>
+		<script>
+			update();
+		</script>
 	</body>
 </html>
