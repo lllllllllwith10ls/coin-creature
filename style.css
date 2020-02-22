@@ -1,0 +1,60 @@
+#coinyPicture
+{
+	width:350px;
+	height:350px;
+	background-size:contain;
+	background-repeat:no-repeat;
+	background-position:center;
+	cursor:pointer;
+	-webkit-transition: opacity 0.1s ease-out,-webkit-transform 0.1s ease-out;
+	-moz-transition: opacity 0.1s ease-out,-moz-transform 0.1s ease-out;
+	-ms-transition: opacity 0.1s ease-out,-ms-transform 0.1s ease-out;
+	-o-transition: opacity 0.1s ease-out,-o-transform 0.1s ease-out;
+	transition: opacity 0.1s ease-out,transform 0.1s ease-out;
+}
+#coinyPicture:hover
+{
+	-webkit-transform:scale(0.99,0.99);opacity:0.9;
+	-moz-transform:scale(0.99,0.99);opacity:0.9;
+	-ms-transform:scale(0.99,0.99);opacity:0.9;
+	-o-transform:scale(0.99,0.99);opacity:0.9;
+	transform:scale(0.99,0.99);opacity:0.9;
+}
+#coinyPicture:active
+{
+	-webkit-transform:scale(0.98,0.98);opacity:1;
+	-moz-transform:scale(0.98,0.98);opacity:1;
+	-ms-transform:scale(0.98,0.98);opacity:1;
+	-o-transform:scale(0.98,0.98);opacity:1;
+	transform:scale(0.98,0.98);opacity:1;
+}
+#shop
+{
+	margin: 20px;
+	margin-top:30px;
+	border-width: 1px;
+	border-style: solid;
+}
+.floatbox{
+	display: inline-block;
+	vertical-align: top;
+	min-height:66px;
+	border-width: 1px;
+	border-style: solid;
+	padding: 4px;
+}
+a
+{
+	text-decoration:underline;
+	cursor:pointer;
+	padding-right:5px;
+}
+a:hover
+{
+	text-shadow:0px 0px 3px #111;
+	color:#000;
+}
+.unbuyable
+{
+	text-decoration:line-through;
+}
