@@ -16,8 +16,11 @@ class CoinMaker {
 		this.cps = args.cps;
 		this.totalCoins = 0;
 		this.background = args.background;
-
-		this.unlocked = false;
+		if(args.unlocked) {
+			this.unlocked = true;
+		} else {
+			this.unlocked = false;
+		}
 		this.amount = 0;
 		this.bought = 0;
 		this.temp = 0;
@@ -121,7 +124,11 @@ class CakeBaker {
 		this.totalDestroyed = 0;
 		this.background = args.background;
 
-		this.unlocked = false;
+		if(args.unlocked) {
+			this.unlocked = true;
+		} else {
+			this.unlocked = false;
+		}
 		this.amount = 0;
 		this.bought = 0;
 		this.temp = 0;
@@ -195,13 +202,13 @@ class CakeBaker {
 
 			let cakes = document.createElement("div");
 			if(this.destroy() > 0) {
-				cakes.innerHTML = "Makes " + formatNumber(this.build(), player.options.notation) + " cakes if it destroys " + formatNumber(this.destroy(), player.options.notation) + " cakes";
+				cakes.innerHTML = "Makes " + formatNumber(this.build(), player.options.notation) + " cakes if it destroys " + formatNumber(this.destroy(), player.options.notation) + " cakes every Cake at Stake.";
 			} else {
-				cakes.innerHTML = "Makes " + formatNumber(this.build(), player.options.notation) + " cakes";
+				cakes.innerHTML = "Makes " + formatNumber(this.build(), player.options.notation) + " cakes every Cake at Stake.";
 			}
+			div.appendChild(desc);
 			div.appendChild(cakes)
 
-			div.appendChild(desc);
 			div.classList.add("floatbox");
 			return div;
 		}
@@ -262,6 +269,7 @@ class Upgrade {
 		this.canBuy = function() {
 			this.updatePrice();
 			let canBuy = true;
+			if(!this.unlocked) canbuy = false;
 			for(let i in this.price) {
 				if(getCurrency(i) < this.price[i] || !isFinite(this.price[i])) {
 					canBuy = false;
@@ -269,13 +277,20 @@ class Upgrade {
 			}
 			return canBuy;
 		};
+		this.unlock = function() {
+			this.unlocked = true;
+		};
+		this.lock = function() {
+			this.unlocked = false;
+			this.bought = false;
+		};
 		this.createDiv = function() {
 			let div = document.createElement("div");
 			let name = document.createElement("div");
 			name.innerHTML = this.name;
 			div.appendChild(name);
 
-			if(!this.bought) {
+			if(!this.bought && this.unlocked) {
 				let buy = document.createElement("div");
 				let buy2 = document.createElement("a");
 				buy2.setAttribute("onclick", "player.upgrades[\"" + this.name + "\"].buy()");
@@ -338,24 +353,14 @@ new CoinMaker({
 	commonName: "CRC|CRCs|recovered",
 	desc: "Recovers Coiny.",
 	price: {Cake: 1},
-	
+	unlocked:true,
 	cps: function() {
 		let baserate = 0.2;
+		baserate *= player.upgrades["A Tennis Ball"].bought ? 2 : 1;
 		return baserate * player.coinMakers["Coiny Recovery Center"].amount;
 	},
 });
 
-new CoinMaker({
-	name: "Coiny Recovery Center",
-	commonName: "CRC|CRCs|recovered",
-	desc: "Recovers Coiny.",
-	price: {Cake: 1},
-	
-	cps: function() {
-		let baserate = 0.2;
-		return baserate * player.coinMakers["Coiny Recovery Center"].amount;
-	},
-});
 
 
 new CoinMaker({
@@ -366,6 +371,7 @@ new CoinMaker({
 	
 	cps: function() {
 		let baserate = 1;
+		baserate *= player.upgrades["Hoes That Work"].bought ? 3 : 1;
 		return baserate * player.coinMakers["Grotato Farm"].amount;
 	},
 });
@@ -375,9 +381,10 @@ new CakeBaker({
 	commonName: "Pin|Pins|baked|unbaked",
 	desc: "Bakes cakes every Cake at Stake.",
 	price: {Coiny: 15},
-	
+	unlocked:true,
 	build: function() {
 		let baserate = 1;
+		baserate += player.upgrades["Motivational Support"].bought ? Math.log10(player.currencies["Coiny"].amount+1) : 0;
 		return baserate * player.cakeBakers["Pin"].amount;
 	},
 	destroy: function() {
@@ -388,16 +395,18 @@ new CakeBaker({
 
 new CakeBaker({
 	name: "Rocky",
-	commonName: "Pin|Pins|eaten|vomited",
+	commonName: "Rocky|Rockys|eaten|vomited",
 	desc: "Eats cakes and vomits out more.",
 	price: {Coiny: 100},
 	
 	build: function() {
 		let baserate = 5;
+		baserate += player.upgrades["Indigestion"].bought ? 1 : 0;
 		return baserate * player.cakeBakers["Rocky"].amount;
 	},
 	destroy: function() {
 		let baserate = 2;
+		baserate -= player.upgrades["Indigestion"].bought ? 1 : 0;
 		return baserate * player.cakeBakers["Rocky"].amount;
 	},
 });
@@ -413,7 +422,30 @@ new Upgrade({
 	buyFunction: function() {
 		player.upgrades["Cake"].boughtAmount++;
 		player.currencies["Cake"].amount++;
+		player.upgrades["Cake"].lock();
+		player.upgrades["Cake"].unlock();
+		update();
 	},
+})
+new Upgrade({
+	name: "A Tennis Ball",
+	desc: "Tennis Ball maintains the CRCs, doubling their output.",
+	price: {Coiny: 5, Cake: 3},
+})
+new Upgrade({
+	name: "Motivational Support",
+	desc: "Pin's cake baking is increased based on Coinys.",
+	price: {Coiny: 20, Cake: 5},
+})
+new Upgrade({
+	name: "Hoes That Work",
+	desc: "Grotato Farms make three times as much Coinys.",
+	price: {Coiny: 100, Cake: 10},
+})
+new Upgrade({
+	name: "Indigestion",
+	desc: "Rockys eat one less cake and vomit out one more cake.",
+	price: {Coiny: 200},
 })
 function addCoins() {
 	player.currencies["Coiny"].amount ++;
@@ -474,12 +506,13 @@ function update(second = false) {
 	unlocks();
 }
 function unlocks() {
-	if(player.upgrades["Cake"].bought) {
-		player.upgrades["Cake"].bought = false;
-		player.upgrades["Cake"].unlocked = true;
-	} else {
-		player.upgrades["Cake"].unlocked = true;
-	}
+	player.upgrades["Cake"].unlock();
+	
+	if(player.coinMakers["Coiny Recovery Center"].amount >= 1) player.upgrades["A Tennis Ball"].unlock();
+	if(player.cakeBakers["Pin"].amount >= 2) player.upgrades["Motivational Support"].unlock();
+	if(player.coinMakers["Grotato Farm"].amount >= 2) player.upgrades["Hoes That Work"].unlock();
+	if(player.cakeBakers["Rocky"].amount >= 1) player.upgrades["Indigestion"].unlock();
+	
 	player.coinMakers["Coiny Recovery Center"].unlocked = true;
 	player.cakeBakers["Pin"].unlocked = true;
 	if(player.coinMakers["Coiny Recovery Center"].amount >= 1) {
@@ -497,7 +530,6 @@ function produce() {
 }
 function cakeAtStake() {
 	player.upgrades["Cake"].boughtAmount = 0;
-	player.currencies["Coiny"].amount = 0;
 	for(let i in player.cakeBakers) {
 		if(getCurrency("Cake") < player.cakeBakers[i].destroy()) {
 			player.currencies["Cake"].amount = 0;
@@ -506,5 +538,6 @@ function cakeAtStake() {
 			player.currencies["Cake"].amount += player.cakeBakers[i].build();
 		}
 	}
+	player.currencies["Coiny"].amount = 0;
 }
 setInterval(function() {update(true);},1000);
